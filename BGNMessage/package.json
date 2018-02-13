@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "test": "./node_modules/.bin/mocha tests/**"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -20,5 +21,13 @@
     "chai-http": "^3.0.0",
     "mocha": "^5.0.0",
     "nodemon": "^1.14.12"
+  },
+  "apidoc": {
+    "name": "BGN Messaging API Docs",
+    "version": "0.1.0",
+    "description": "BGN Messaging API Docs",
+    "apidoc": {
+      "title": "BGN Messaging API Docs"
+    }
   }
 }
