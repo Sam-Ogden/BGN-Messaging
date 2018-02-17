@@ -10,15 +10,13 @@ var Schema = mongoose.Schema,
  
 var MessageSchema = new Schema({
     _id: { type: ObjectId, auto: true },
-    content: { type: String, required: true },
+    content: { type: String, required: true, minlength: 1 },
     timestamp: { type: Number, required: true },
     tags: { type: [String] },
 })
 
 var Message = mongoose.model('Message', MessageSchema)
-// Message.create({content: 'Hey there', timestamp: 123123123, tags: ['hi']}, (err, result)=>{
 
-// })
 module.exports = {
     getAllMessages: (cb)=>{
         Message.find({}, '_id content timestamp tags', (err, results)=>{
@@ -27,13 +25,18 @@ module.exports = {
     },
 
     getMessageById: (id, cb)=>{
-        _id = new mongoose.mongo.ObjectID(id)
-        Message.findOne({_id: _id}, (err, results)=>{
+        Message.findOne({_id: id}, (err, results)=>{
             cb(err, results)
         })
     },
 
     create: (msg, cb)=>{
+        Message.create(msg, (err, result)=>{
+                cb(err, result)
+        })
+    },
+
+    delete: (id, cb)=>{
         return
     },
 
@@ -50,9 +53,15 @@ module.exports = {
         else if(msg.tags) {
             if(!util.isArray(msg.tags)) cb('Tags must be an array of strings')
             for(i in msg.tags) {
-                if(!util.isString(msg.tags[i])) 
+                if(!util.isString(msg.tags[i])) {
                     cb('Tags must be an array of strings, '+msg.tags[i]+' is not a string.')
+                    return
+                }
             }
-        } else cb(null)
+        } else if(msg._id) {
+            if(!mongoose.Types.ObjectId.isValid(msg._id)) cb('_id must be a valid object id')
+        } 
+        // SUCCESS  
+        cb(null)
     },
 }

@@ -11,11 +11,12 @@ var Message = require('../models/Message')
 router.get('/', function(req, res, next) {
 	Message.getAllMessages((err, results)=>{
 		if(err) {
+			res.statusCode = 500
 			res.json({
 				result: false,
 				dataType: 'string',
-				data: "Error: There was a problem with your request."
-			})
+				data: 'Error: there was a problem with your request. \n'+err
+			})		
 		} else {
 			res.json({
 				result: true,
@@ -48,20 +49,23 @@ router.get('/', function(req, res, next) {
  *           }'
  */
 router.post('/', function(req, res, next) {
-	Message.validateMessage(req.body, (error)=>{
-		if(error) {
+	Message.validateMessage(req.body, (err)=>{
+		if(err) {
+			res.statusCode = 400
 			res.json({
 				result: false,
 				dataType: 'string',
-				data: 'Validation error: '+error
+				data: "Validation error: "+err
 			})
 		} else {
+			// Valid message, create document
 			Message.create(req.body, (err, result)=>{
-				if(error) {
+				if(err) {
+					res.statusCode = 400
 					res.json({
 						result: false,
 						dataType: 'string',
-						data: 'Error: There was a problem with your request.'
+						data: 'Error: there was a problem with your request. \n'+err
 					})
 				} else {
 					res.json({

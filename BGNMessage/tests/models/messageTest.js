@@ -12,14 +12,15 @@ describe('Message Model', ()=>{
 	})
 
     describe('getAllMessages', ()=>{
-        //length = number of documents in Message collection
+        // Getting messages should always work.
         it('Error is null', (done)=>{
             Message.getAllMessages((err, res)=>{
                 expect(err).to.equal(null)
                 done()                
             })
         })
-        it('Should have length 1', (done)=>{
+        // Return all messages (only 1 test message created)
+        it('Result has length 1', (done)=>{
             Message.getAllMessages((err, res)=>{
                 expect(res).to.have.lengthOf(1)
                 done()                
@@ -46,16 +47,49 @@ describe('Message Model', ()=>{
     })
 
     describe('validateMessage', ()=>{
-        it('should not return any errors', (done)=>{
+        // Valid messages
+        it('no errors without tags', (done)=>{
             Message.validateMessage({content: 'a', timestamp: 123}, (err)=>{
                 expect(err).to.equal(null)
+                done()
             })
+        })
+        it('no errors with valid tags', (done)=>{
             Message.validateMessage({content: 'a', timestamp: 123, tags: ['dont', 'fail']}, (err)=>{
                 expect(err).to.equal(null)
+                done()                    
             })
-            done()
         })
-        
+
+        // TODO: *** isolate each field creating invalid messages
+    })
+    
+    describe('create Message', ()=>{
+        // Valid messages
+        it('should not return any errors', (done)=>{
+            Message.create({content: 'a', timestamp: 123}, (err)=>{
+                expect(err).to.equal(null)
+                done()
+            })
+        })
+        it('no errors with valid tags', (done)=>{
+            Message.validateMessage({content: 'a', timestamp: 123, tags: ['dont', 'fail']}, (err)=>{
+                expect(err).to.equal(null)
+                done()                    
+            })
+        })
+        it('No content returns error', (done)=>{
+            Message.create({content: '', timestamp: 123}, (err, result)=>{
+                expect(err).to.not.equal(null)
+                done()
+            })
+        })      
+        it('invalid timestamp returns error', (done)=>{
+            Message.create({content: 'a', timestamp: 'zz', tags: ['do', 'fail']}, (err, result)=>{
+                expect(err).to.not.equal(null)
+                done()
+            })
+        })      
         // isolate each field creating invalid messages
     })
 });
