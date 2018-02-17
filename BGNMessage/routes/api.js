@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-
+var Message = require('../models/Message')
 /**
  * @api {get} /api/messages/ Get all messages
  * @apiGroup Messages
@@ -9,7 +9,21 @@ var router = express.Router();
  * @apiSuccess {Message[]}  data Array of messages
  */
 router.get('/', function(req, res, next) {
-  res.sendStatus(200);
+	Message.getAllMessages((err, results)=>{
+		if(err) {
+			res.json({
+				result: false,
+				dataType: 'string',
+				data: "Error: There was a problem with your request."
+			})
+		} else {
+			res.json({
+				result: true,
+				dataType: 'message',
+				data: results
+			})
+		}
+	})    
 });
 
 /**
@@ -20,7 +34,8 @@ router.get('/', function(req, res, next) {
  * @apiSuccess {String}     dataType Type of data returned
  * @apiSuccess {Message}    data The created message object
  * @apiParam (Required parameters) {String} content The messages content
- * @apiParam (Required parameters) {Number} timestamp Date created (UNIX epoch format)
+ * @apiParam (Required parameters) {Number} timestamp 
+ * 			Date created (UNIX epoch format, number of seconds sice 01/01/1970 00:00:00)
  * @apiParam (Optional parameters) {Number} _id The messages unique id
  * @apiParam (Optional parameters) {String[]} tags  Message tags
  * @apiExample {curl} Example usage:
@@ -33,7 +48,31 @@ router.get('/', function(req, res, next) {
  *           }'
  */
 router.post('/', function(req, res, next) {
-    res.sendStatus(200);
+	Message.validateMessage(req.body, (error)=>{
+		if(error) {
+			res.json({
+				result: false,
+				dataType: 'string',
+				data: 'Validation error: '+error
+			})
+		} else {
+			Message.create(req.body, (err, result)=>{
+				if(error) {
+					res.json({
+						result: false,
+						dataType: 'string',
+						data: 'Error: There was a problem with your request.'
+					})
+				} else {
+					res.json({
+						result: true,
+						dataType: 'message',
+						data: result
+					})
+				}
+			})
+		}
+	})
 });
 
 /**

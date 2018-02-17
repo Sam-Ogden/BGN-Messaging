@@ -1,12 +1,12 @@
-var chai = require('chai');
-var chaiHttp = require('chai-http');
-var app = require('../../app');
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const app = require('../../app');
 
-var expect = chai.expect;
+const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Messaging API', function() {
+describe('Messaging API', ()=>{
 	it('responds with status 200', function(done) {
 		chai.request(app)
 		.get('/api/messages/')
