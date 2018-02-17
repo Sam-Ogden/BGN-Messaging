@@ -25,8 +25,9 @@ module.exports = {
     },
 
     getMessageById: (id, cb)=>{
-        Message.findOne({_id: id}, (err, results)=>{
-            cb(err, results)
+        Message.findOne({_id: id}, (err, result)=>{
+            if(result == null && err == null) err = 'No message with given ID'  
+            cb(err, result)
         })
     },
 
@@ -37,7 +38,9 @@ module.exports = {
     },
 
     delete: (id, cb)=>{
-        return
+        Message.findOne({_id: id}).remove((err)=>{
+            cb(err)
+        })
     },
 
     validateMessage: (msg, cb)=>{

@@ -15,7 +15,7 @@ router.get('/', function(req, res, next) {
 			res.json({
 				result: false,
 				dataType: 'string',
-				data: 'Error: there was a problem with your request. \n'+err
+				data: 'Error: there was a problem with your request. '+err
 			})		
 		} else {
 			res.json({
@@ -65,7 +65,7 @@ router.post('/', function(req, res, next) {
 					res.json({
 						result: false,
 						dataType: 'string',
-						data: 'Error: there was a problem with your request. \n'+err
+						data: 'Error: there was a problem with your request. '+err
 					})
 				} else {
 					res.json({
@@ -81,7 +81,7 @@ router.post('/', function(req, res, next) {
 
 /**
  * @api {get} /api/messages/<_id> Get message
- * @apiDescription Get message with given _id
+ * @apiDescription Get message with given _id. If no message exists with id, returns 400
  * @apiGroup Messages
  * @apiSuccess {Boolean}    result Whether request was successful or not
  * @apiSuccess {String}     dataType Type of data returned
@@ -90,7 +90,22 @@ router.post('/', function(req, res, next) {
  *      curl -X GET http://host/api/messages/59f22f4d7dac520013887673 -H 'content-type: application/json'
  */
 router.get('/:_id', function(req, res, next) {
-    res.sendStatus(200);
+    Message.getMessageById(req.params._id, (err, result)=>{
+		if(err) {
+			res.statusCode = 400
+			res.json({
+				result: false,
+				dataType: 'string',
+				data: err
+			})
+		} else {
+			res.json({
+				result: true,
+				dataType: 'message',
+				data: result
+			})
+		}
+	})
 });
 
 /**
@@ -104,7 +119,22 @@ router.get('/:_id', function(req, res, next) {
  *      curl -X DELETE http://host/api/messages/59f22f4d7dac520013887673 -H 'content-type: application/json'
  */
 router.delete('/:_id', function(req, res, next) {
-    res.sendStatus(200);
+    Message.delete(req.params._id, (err)=>{
+		if(err) {
+			res.statusCode = 400
+			res.json({
+				result: false,
+				dataType: 'string',
+				data: err
+			})
+		} else {
+			res.json({
+				result: true,
+				dataType: 'string',
+				data: 'Message deleted'
+			})
+		}
+	})
 });
 
 

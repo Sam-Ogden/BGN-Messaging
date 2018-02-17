@@ -67,6 +67,71 @@ describe('Messaging API', ()=>{
 			});
 		});
 	});
+
+	describe('GET message with ID', ()=>{
+		it('responds with status 200, result true and data length of 1', function(done) {
+			chai.request(app)
+			.get('/api/messages/'+testMsg._id)
+			.end(function(err, res) {
+				expect(res).to.have.status(200);
+				expect(res.body.result).to.equal(true);
+				expect(String(res.body.data._id)).to.equal(String(testMsg._id))
+				done();
+			});
+		});
+
+		it('No message with ID responds with status 400, result false', function(done) {
+			chai.request(app)
+			.get('/api/messages/5a7817d9e69938e6693e7a88')
+			.end(function(err, res) {
+				expect(res).to.have.status(400);
+				expect(res.body.result).to.equal(false);
+				done();
+			});
+		});
+
+		it('Invalid ID responds with status 400, result false', function(done) {
+			chai.request(app)
+			.get('/api/messages/necesitoMasDineroPlsHelp')
+			.end(function(err, res) {
+				expect(res).to.have.status(400);
+				expect(res.body.result).to.equal(false);
+				done();
+			});
+		});
+	});
+
+	describe('DELETE message with ID', ()=>{
+		it('responds with status 200, result true', function(done) {
+			chai.request(app)
+			.delete('/api/messages/'+testMsg._id)
+			.end(function(err, res) {
+				expect(res).to.have.status(200);
+				expect(res.body.result).to.equal(true);
+				done();
+			});
+		});
+
+		it('No message with ID responds with status 200, result true', function(done) {
+			chai.request(app)
+			.delete('/api/messages/5a7817d9e69938e6693e7a88')
+			.end(function(err, res) {
+				expect(res).to.have.status(200);
+				expect(res.body.result).to.equal(true);
+				done();
+			});
+		});
+
+		it('Invalid ID responds with status 400, result false', function(done) {
+			chai.request(app)
+			.delete('/api/messages/necesitoMasDineroPlsHelp')
+			.end(function(err, res) {
+				expect(res).to.have.status(400);
+				expect(res.body.result).to.equal(false);
+				done();
+			});
+		});
+	});
 });
 
 // Clear Message collection, and fill with fresh test data
